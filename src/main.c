@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <getopt.h>
 
+#include "disassembler.h"
+
 static struct option long_options[] = {
     {"version", no_argument, 0, 'v'},
     {"help",    no_argument, 0, 'h'}
@@ -13,8 +15,8 @@ void print_version();
 
 int main(int argc, char **argv)
 {
-    int     c, fsize;
-    uint8_t *buffer;
+    int     c, fsize, i, j;
+    uint8_t *buffer, opbytes;
     FILE    *fp;
 
     c = getopt_long(argc, argv, "vh", long_options, NULL);
@@ -45,10 +47,19 @@ int main(int argc, char **argv)
 
     fclose(fp);
 
-    int i;
-    for (i = 0; i < fsize; i++)
-        printf("%02X\n", buffer[i]);
+    instruction_t instruction;
+    for (i = 0, opbytes = 0; i < fsize; i += opbytes) {
+        instruction = instruction_for_value(buffer[i]);
+        opbytes = instruction.len;
 
+        printf("%s", instruction.name);
+
+        if (opbytes > 1)
+            for (j = 1; j < opbytes; j++)
+                printf("%02X ", buffer[i+j]);
+        printf("\n");
+    }
+    
     return 0;
 }
 
