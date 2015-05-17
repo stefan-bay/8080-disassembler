@@ -14,4 +14,4 @@ disassembler.o: src/disassembler.c src/disassembler.h
 	mv disassembler.o obj/
 
 clean:
-	rm *.o $(EXE)
+	rm obj/*.o $(EXE)
