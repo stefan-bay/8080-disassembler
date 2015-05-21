@@ -10,8 +10,7 @@ static struct option long_options[] = {
 };
 
 #define PRGM_VERSION "0.0.1"
-
-void print_version();
+#define USAGE        "usage: %s [--version] [--help] <file_path>\n"
 
 int main(int argc, char **argv)
 {
@@ -20,18 +19,19 @@ int main(int argc, char **argv)
     FILE    *fp;
 
     c = getopt_long(argc, argv, "vh", long_options, NULL);
-    if (c != -1)
-        switch (c) {
-            case 'v': // --version
-                print_version();
-                exit(EXIT_SUCCESS);
-            case 'h': // --help
-                printf("usage: %s [--version] [--help] <file_path>\n", argv[0]);
-                exit(EXIT_SUCCESS);
-            default: // unknown
-                fprintf(stderr, "usage: %s [--version] [--help] <file_path>\n", argv[0]);
-                exit(EXIT_FAILURE);
-        }
+    switch (c) {
+    case -1:  // odd error
+        fprintf(stderr, "%s: an unknown error occured", argv[1]);
+    case 'v': // --version
+        printf("%s verson %s", argv[1], PRGM_VERSION);
+        exit(EXIT_SUCCESS);
+    case 'h': // --help
+        printf(USAGE, argv[0]);
+        exit(EXIT_SUCCESS);
+    default: // unknown
+        fprintf(stderr, USAGE, argv[0]);
+        exit(EXIT_FAILURE);
+    }
 
     fp = fopen(argv[1], "rb");
     if (fp == NULL)
@@ -47,12 +47,12 @@ int main(int argc, char **argv)
 
     fclose(fp);
 
-    instruction_t instruction;
+    struct instruction op;
     for (i = 0, opbytes = 0; i < fsize; i += opbytes) {
-        instruction = instruction_for_value(buffer[i]);
-        opbytes = instruction.len;
+        op = instruction_for_value(buffer[i]);
+        opbytes = op.len;
 
-        printf("%s", instruction.name);
+        printf("%s", op.name);
 
         if (opbytes > 1)
             for (j = 1; j < opbytes; j++)
@@ -63,9 +63,4 @@ int main(int argc, char **argv)
     free(buffer);
 
     return 0;
-}
-
-void print_version()
-{
-    printf("version %s\n", PRGM_VERSION);
 }
