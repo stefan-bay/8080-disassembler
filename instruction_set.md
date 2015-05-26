@@ -8,9 +8,9 @@ Abbreviations:
 
 8-Bit Transfers:
 
-| Instruction | Length | Description |
-| ----------- | :----: | ----------: |
-| 
+| Instruction | Description  |
+| ----------- | :----------: |
+| MOV R R     | 
 
 
 
