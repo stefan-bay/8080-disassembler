@@ -63,11 +63,11 @@ int main(int argc, char *argv[])
 		op = instruction_for_value(buffer[i]);
 		opbytes = op.len;
 
-		printf("%s", op.name);
+		printf("%04x\t%s", i, op.name);
 
 		if (opbytes > 1)
 		for (j = 1; j < opbytes; j++)
-                printf("%02X ", buffer[i+j]);
+			printf("%02x  ", buffer[i+j]);
         printf("\n");
     }
     
